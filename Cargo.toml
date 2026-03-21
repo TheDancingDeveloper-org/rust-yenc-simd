@@ -1,0 +1,20 @@
+[package]
+name = "yenc-simd"
+version = "0.1.0"
+edition = "2024"
+license = "MIT"
+description = "Fast yEnc encoder/decoder with SIMD acceleration (SSE2/AVX2)"
+repository = "https://github.com/AusAgentSmith/rust-yenc-simd"
+keywords = ["yenc", "usenet", "nntp", "simd", "decode"]
+categories = ["encoding", "parser-implementations"]
+
+[dependencies]
+crc32fast = "1"
+thiserror = "2"
+
+[dev-dependencies]
+criterion = { version = "0.5", features = ["html_reports"] }
+
+[[bench]]
+name = "decode"
+harness = false
