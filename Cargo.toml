@@ -4,9 +4,15 @@ version = "0.1.0"
 edition = "2024"
 license = "MIT"
 description = "Fast yEnc encoder/decoder with SIMD acceleration (SSE2/AVX2)"
-repository = "https://github.com/AusAgentSmith/rust-yenc-simd"
+repository = "https://github.com/AusAgentSmith-org/rust-yenc-simd"
 keywords = ["yenc", "usenet", "nntp", "simd", "decode"]
 categories = ["encoding", "parser-implementations"]
+
+[lints.clippy]
+all = { level = "warn", priority = -1 }
+
+[lints.rust]
+unused = "warn"
 
 [dependencies]
 crc32fast = "1"
