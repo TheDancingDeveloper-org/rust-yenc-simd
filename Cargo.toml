@@ -4,7 +4,7 @@ version = "0.1.0"
 edition = "2024"
 license = "MIT"
 description = "Fast yEnc encoder/decoder with SIMD acceleration (SSE2/AVX2)"
-repository = "https://github.com/AusAgentSmith-org/rust-yenc-simd"
+repository = "http://100.92.54.45:3002/indexarr/rust-yenc-simd"
 keywords = ["yenc", "usenet", "nntp", "simd", "decode"]
 categories = ["encoding", "parser-implementations"]
 
