@@ -1,6 +1,6 @@
 [package]
 name = "yenc-simd"
-version = "0.1.0"
+version = "0.1.1"
 edition = "2024"
 license = "MIT"
 description = "Fast yEnc encoder/decoder with SIMD acceleration (SSE2/AVX2)"
