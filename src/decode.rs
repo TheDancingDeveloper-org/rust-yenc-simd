@@ -111,15 +111,13 @@ pub fn decode_yenc(raw: &[u8]) -> Result<YencDecodeResult, YencError> {
 
     if let Some(expected_crc_str) =
         extract_param(&yend_str, "pcrc32").or_else(|| extract_param(&yend_str, "crc32"))
+        && let Ok(expected_crc) = u32::from_str_radix(&expected_crc_str, 16)
+        && crc != expected_crc
     {
-        if let Ok(expected_crc) = u32::from_str_radix(&expected_crc_str, 16) {
-            if crc != expected_crc {
-                return Err(YencError::CrcMismatch {
-                    expected: expected_crc,
-                    actual: crc,
-                });
-            }
-        }
+        return Err(YencError::CrcMismatch {
+            expected: expected_crc,
+            actual: crc,
+        });
     }
 
     // Adjust part_begin to 0-indexed (yEnc uses 1-based)
