@@ -9,16 +9,12 @@ fn bench_decode(c: &mut Criterion) {
         let (encoded, _) = encode_article(&data, "bench.bin", 1, 2, 0, size as u64 * 10);
 
         group.throughput(Throughput::Bytes(size as u64));
-        group.bench_with_input(
-            BenchmarkId::new("yenc", size),
-            &encoded,
-            |b, encoded| {
-                b.iter(|| {
-                    let result = decode_yenc(encoded).unwrap();
-                    std::hint::black_box(result);
-                });
-            },
-        );
+        group.bench_with_input(BenchmarkId::new("yenc", size), &encoded, |b, encoded| {
+            b.iter(|| {
+                let result = decode_yenc(encoded).unwrap();
+                std::hint::black_box(result);
+            });
+        });
     }
     group.finish();
 }

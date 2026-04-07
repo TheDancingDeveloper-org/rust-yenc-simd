@@ -70,13 +70,9 @@ pub fn encode_article(
 
     // =yend footer
     if total_parts > 1 {
-        out.extend_from_slice(
-            format!("=yend size={} pcrc32={crc:08X}\r\n", raw.len()).as_bytes(),
-        );
+        out.extend_from_slice(format!("=yend size={} pcrc32={crc:08X}\r\n", raw.len()).as_bytes());
     } else {
-        out.extend_from_slice(
-            format!("=yend size={} crc32={crc:08X}\r\n", raw.len()).as_bytes(),
-        );
+        out.extend_from_slice(format!("=yend size={} crc32={crc:08X}\r\n", raw.len()).as_bytes());
     }
 
     (out, crc)

@@ -42,8 +42,7 @@ pub struct YencDecodeResult {
 /// Handles raw NNTP article data including headers before the yEnc body.
 pub fn decode_yenc(raw: &[u8]) -> Result<YencDecodeResult, YencError> {
     // Find =ybegin line
-    let ybegin_pos = find_line_starting_with(raw, b"=ybegin ")
-        .ok_or(YencError::MissingHeader)?;
+    let ybegin_pos = find_line_starting_with(raw, b"=ybegin ").ok_or(YencError::MissingHeader)?;
     let ybegin_end = find_newline(raw, ybegin_pos).unwrap_or(raw.len());
     let ybegin_line = strip_cr(&raw[ybegin_pos..ybegin_end]);
     let ybegin_str = lossy_str(ybegin_line);
@@ -110,8 +109,8 @@ pub fn decode_yenc(raw: &[u8]) -> Result<YencDecodeResult, YencError> {
     // CRC32
     let crc = crc32fast::hash(&decoded);
 
-    if let Some(expected_crc_str) = extract_param(&yend_str, "pcrc32")
-        .or_else(|| extract_param(&yend_str, "crc32"))
+    if let Some(expected_crc_str) =
+        extract_param(&yend_str, "pcrc32").or_else(|| extract_param(&yend_str, "crc32"))
     {
         if let Ok(expected_crc) = u32::from_str_radix(&expected_crc_str, 16) {
             if crc != expected_crc {
@@ -167,8 +166,12 @@ fn decode_body_scalar(data: &[u8], out: &mut Vec<u8>) {
     while i < len {
         let b = data[i];
         match b {
-            b'\n' => { i += 1; }
-            b'\r' => { i += 1; }
+            b'\n' => {
+                i += 1;
+            }
+            b'\r' => {
+                i += 1;
+            }
             b'=' if i + 1 < len => {
                 let next = data[i + 1];
                 // Escape sequence: (next - 64 - 42) = (next - 106)
@@ -225,7 +228,9 @@ unsafe fn decode_body_sse2(data: &[u8], out: &mut Vec<u8>) {
                 while i < end {
                     let b = *data.get_unchecked(i);
                     match b {
-                        b'\n' | b'\r' => { i += 1; }
+                        b'\n' | b'\r' => {
+                            i += 1;
+                        }
                         b'=' if i + 1 < len => {
                             out.push((*data.get_unchecked(i + 1)).wrapping_sub(106));
                             i += 2;
@@ -242,7 +247,9 @@ unsafe fn decode_body_sse2(data: &[u8], out: &mut Vec<u8>) {
         while i < len {
             let b = *data.get_unchecked(i);
             match b {
-                b'\n' | b'\r' => { i += 1; }
+                b'\n' | b'\r' => {
+                    i += 1;
+                }
                 b'=' if i + 1 < len => {
                     out.push((*data.get_unchecked(i + 1)).wrapping_sub(106));
                     i += 2;
@@ -298,7 +305,9 @@ unsafe fn decode_body_avx2(data: &[u8], out: &mut Vec<u8>) {
                 while i < end {
                     let b = *data.get_unchecked(i);
                     match b {
-                        b'\n' | b'\r' => { i += 1; }
+                        b'\n' | b'\r' => {
+                            i += 1;
+                        }
                         b'=' if i + 1 < len => {
                             out.push((*data.get_unchecked(i + 1)).wrapping_sub(106));
                             i += 2;
@@ -315,7 +324,9 @@ unsafe fn decode_body_avx2(data: &[u8], out: &mut Vec<u8>) {
         while i < len {
             let b = *data.get_unchecked(i);
             match b {
-                b'\n' | b'\r' => { i += 1; }
+                b'\n' | b'\r' => {
+                    i += 1;
+                }
                 b'=' if i + 1 < len => {
                     out.push((*data.get_unchecked(i + 1)).wrapping_sub(106));
                     i += 2;
@@ -458,8 +469,12 @@ mod tests {
             .collect();
         let encoded: Vec<u8> = original.iter().map(|b| b.wrapping_add(42)).collect();
 
-        assert!(!encoded.iter().any(|&b| b == b'\r' || b == b'\n' || b == b'='),
-            "Test data should not contain special characters");
+        assert!(
+            !encoded
+                .iter()
+                .any(|&b| b == b'\r' || b == b'\n' || b == b'='),
+            "Test data should not contain special characters"
+        );
 
         let mut decoded = Vec::new();
         decode_body(&encoded, &mut decoded);
@@ -512,7 +527,9 @@ mod tests {
              =ypart begin=1 end={}\n\
              {encoded_line}\n\
              =yend size={} part=1 pcrc32={crc:08X}\n",
-            original.len(), original.len(), original.len(),
+            original.len(),
+            original.len(),
+            original.len(),
         );
 
         let result = decode_yenc(article.as_bytes()).unwrap();
@@ -542,7 +559,9 @@ mod tests {
              =ypart begin=1 end={}\r\n\
              {encoded_line}\r\n\
              =yend size={} part=1 pcrc32={crc:08X}\r\n",
-            original.len(), original.len(), original.len(),
+            original.len(),
+            original.len(),
+            original.len(),
         );
 
         let result = decode_yenc(article.as_bytes()).unwrap();
@@ -582,11 +601,15 @@ mod tests {
 
         let mut article = Vec::new();
         article.extend_from_slice(
-            format!("=ybegin part=1 line=128 size=10000 name=big.bin\r\n\
-                      =ypart begin=1 end=10000\r\n").as_bytes()
+            format!(
+                "=ybegin part=1 line=128 size=10000 name=big.bin\r\n\
+                      =ypart begin=1 end=10000\r\n"
+            )
+            .as_bytes(),
         );
         article.extend_from_slice(&body);
-        article.extend_from_slice(format!("=yend size=10000 part=1 pcrc32={crc:08X}\r\n").as_bytes());
+        article
+            .extend_from_slice(format!("=yend size=10000 part=1 pcrc32={crc:08X}\r\n").as_bytes());
 
         let result = decode_yenc(&article).unwrap();
         assert_eq!(result.data.len(), original.len());
@@ -605,7 +628,8 @@ mod tests {
             "=ybegin line=128 size={} name=test.bin\n\
              {encoded_line}\n\
              =yend size={} crc32=DEADBEEF\n",
-            original.len(), original.len(),
+            original.len(),
+            original.len(),
         );
 
         let err = decode_yenc(article.as_bytes()).unwrap_err();
